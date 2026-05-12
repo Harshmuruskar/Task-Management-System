@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TaskRequest {
+public class TaskRequestDTO {
 	private String title;
 	private String description;
     private String teamId;

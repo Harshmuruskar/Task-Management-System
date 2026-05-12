@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentCreateResponse {
-    private CommentResponse comment;
+public class TaskUpdateResponseDTO {
+    private TaskResponseDTO task;
 }
 

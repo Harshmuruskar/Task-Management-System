@@ -1,15 +1,15 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.CommentCreateResponse;
-import com.organization.taskManagement.DTO.CommentRequest;
-import com.organization.taskManagement.DTO.CommentResponse;
+import com.organization.taskManagement.DTO.CommentCreateResponseDTO;
+import com.organization.taskManagement.DTO.CommentRequestDTO;
+import com.organization.taskManagement.DTO.CommentResponseDTO;
 import com.organization.taskManagement.Mappers.CommentMapper;
 import com.organization.taskManagement.Model.Comment;
 import com.organization.taskManagement.Model.EmployeeRegModel;
 import com.organization.taskManagement.Model.Task;
-import com.organization.taskManagement.Repos.CommentRepository;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
-import com.organization.taskManagement.Repos.TaskRepo;
+import com.organization.taskManagement.Repository.CommentRepository;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
+import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
 	private final CommentRepository commentRepository;
-	private final TaskRepo taskRepo;
-	private final EmployeeRegRepo employeeRegRepo;
+	private final TaskRepository taskRepo;
+	private final EmployeeRegisterRepository employeeRegRepo;
 
-	public CommentCreateResponse addComment(Long taskId, CommentRequest request) {
+	public CommentCreateResponseDTO addComment(Long taskId, CommentRequestDTO request) {
 		Task task = taskRepo.findById(taskId)
 				.orElseThrow(() -> new RuntimeException("Task not found with ID: " + taskId));
 
@@ -30,8 +30,8 @@ public class CommentService {
 
 		Comment comment = CommentMapper.toEntity(request, task, employee);
 		Comment savedComment = commentRepository.save(comment);
-		CommentResponse commentResponse = CommentMapper.toResponse(savedComment);
+		CommentResponseDTO commentResponse = CommentMapper.toResponse(savedComment);
 
-		return new CommentCreateResponse(commentResponse);
+		return new CommentCreateResponseDTO(commentResponse);
 	}
 }

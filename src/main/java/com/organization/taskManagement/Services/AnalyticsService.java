@@ -1,9 +1,9 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.AnalyticsResponse;
+import com.organization.taskManagement.DTO.AnalyticsResponseDTO;
 import com.organization.taskManagement.Enums.TaskStatus;
 import com.organization.taskManagement.Model.Task;
-import com.organization.taskManagement.Repos.TaskRepo;
+import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +15,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AnalyticsService {
 
-	private final TaskRepo taskRepo;
+	private final TaskRepository taskRepo;
 
-	public AnalyticsResponse getOverview() {
+	public AnalyticsResponseDTO getOverview() {
 		List<Task> tasks = taskRepo.findAll();
 
 		long totalTasks = tasks.size();
@@ -32,7 +32,7 @@ public class AnalyticsService {
 					teamDistribution.put(team, teamDistribution.getOrDefault(team, 0L) + 1);
 				});
 
-		AnalyticsResponse response = new AnalyticsResponse();
+		AnalyticsResponseDTO response = new AnalyticsResponseDTO();
 		response.setTotalTasks(totalTasks);
 		response.setCompletedTasks(completedTasks);
 		response.setPendingTasks(pendingTasks);

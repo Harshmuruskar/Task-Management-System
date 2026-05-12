@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeRegistrationRequest {
+public class EmployeeRegistrationRequestDTO {
     @NotBlank(message = "Name is required")
     private String name;
 

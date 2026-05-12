@@ -1,15 +1,15 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.TaskRequest;
-import com.organization.taskManagement.DTO.TaskPatchRequest;
-import com.organization.taskManagement.DTO.TaskResponse;
-import com.organization.taskManagement.DTO.TaskUpdateResponse;
+import com.organization.taskManagement.DTO.TaskRequestDTO;
+import com.organization.taskManagement.DTO.TaskPatchRequestDTO;
+import com.organization.taskManagement.DTO.TaskResponseDTO;
+import com.organization.taskManagement.DTO.TaskUpdateResponseDTO;
 import com.organization.taskManagement.Enums.TaskStatus;
 import com.organization.taskManagement.Mappers.TaskMapper;
 import com.organization.taskManagement.Model.EmployeeRegModel;
 import com.organization.taskManagement.Model.Task;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
-import com.organization.taskManagement.Repos.TaskRepo;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
+import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TaskService {
 
-	private final TaskRepo taskRepo;
+	private final TaskRepository taskRepo;
 
-	private final EmployeeRegRepo employeeRegRepo;
+	private final EmployeeRegisterRepository employeeRegRepo;
 
-	public TaskResponse createTask(TaskRequest taskRequest) {
+	public TaskResponseDTO createTask(TaskRequestDTO taskRequest) {
 
 		EmployeeRegModel employeeRegModel = employeeRegRepo.findByEmployeeId(taskRequest.getAssignedToId())
 				.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + taskRequest.getAssignedToId()));
@@ -46,7 +46,7 @@ public class TaskService {
 		return TaskMapper.toResponse(savedTask);
 	}
 
-	public TaskUpdateResponse updateTask(Long id, TaskPatchRequest patchRequest) {
+	public TaskUpdateResponseDTO updateTask(Long id, TaskPatchRequestDTO patchRequest) {
 		Task task = taskRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Task not found with ID: " + id));
 
@@ -69,10 +69,10 @@ public class TaskService {
 		}
 
 		Task savedTask = taskRepo.save(task);
-		return new TaskUpdateResponse(TaskMapper.toResponse(savedTask));
+		return new TaskUpdateResponseDTO(TaskMapper.toResponse(savedTask));
 	}
 
-	public List<TaskResponse> getTasks(String team, String status) {
+	public List<TaskResponseDTO> getTasks(String team, String status) {
 		String parsedTeam = (team == null || team.isBlank()) ? null : team;
 		TaskStatus parsedStatus = TaskStatus.fromValue(status);
 

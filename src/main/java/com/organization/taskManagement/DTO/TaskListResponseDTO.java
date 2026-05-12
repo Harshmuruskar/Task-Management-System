@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class TaskListResponse {
-    private List<TaskResponse> tasks;
+public class TaskListResponseDTO {
+    private List<TaskResponseDTO> tasks;
 }

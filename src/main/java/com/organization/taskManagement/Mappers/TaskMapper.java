@@ -1,7 +1,7 @@
 package com.organization.taskManagement.Mappers;
 
-import com.organization.taskManagement.DTO.TaskRequest;
-import com.organization.taskManagement.DTO.TaskResponse;
+import com.organization.taskManagement.DTO.TaskRequestDTO;
+import com.organization.taskManagement.DTO.TaskResponseDTO;
 import com.organization.taskManagement.Enums.TaskStatus;
 import com.organization.taskManagement.Model.EmployeeRegModel;
 import com.organization.taskManagement.Model.Task;
@@ -9,7 +9,7 @@ import com.organization.taskManagement.Model.Task;
 // Mapper for converting Task DTOs to/from entities
 public class TaskMapper {
 
-    public static Task toEntity(TaskRequest request, EmployeeRegModel employee) {
+    public static Task toEntity(TaskRequestDTO request, EmployeeRegModel employee) {
 
         if (request == null) return null;
 
@@ -23,11 +23,11 @@ public class TaskMapper {
                 .build();
     }
 
-    public static TaskResponse toResponse(Task task) {
+    public static TaskResponseDTO toResponse(Task task) {
 
         if (task == null) return null;
 
-        TaskResponse response = new TaskResponse();
+        TaskResponseDTO response = new TaskResponseDTO();
         response.setId(task.getId() != null ? String.valueOf(task.getId()) : null);
         response.setTitle(task.getTitle());
         response.setStatus(task.getStatus());

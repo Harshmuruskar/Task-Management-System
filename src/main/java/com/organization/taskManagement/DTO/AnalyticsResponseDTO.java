@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class AnalyticsResponse {
+public class AnalyticsResponseDTO {
 
     private Long totalTasks;
     private Long completedTasks;

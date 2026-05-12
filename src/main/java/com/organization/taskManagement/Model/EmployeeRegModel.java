@@ -1,6 +1,5 @@
 package com.organization.taskManagement.Model;
 
-import com.organization.taskManagement.DTO.TaskRequest;
 import com.organization.taskManagement.Enums.EmployeeRole;
 import com.organization.taskManagement.Enums.Designation;
 import jakarta.persistence.*;

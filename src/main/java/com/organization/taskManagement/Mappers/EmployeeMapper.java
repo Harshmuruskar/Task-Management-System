@@ -1,12 +1,12 @@
 package com.organization.taskManagement.Mappers;
 
-import com.organization.taskManagement.DTO.EmployeeRegistrationRequest;
-import com.organization.taskManagement.DTO.EmployeeRegistrationResponse;
+import com.organization.taskManagement.DTO.EmployeeRegistrationRequestDTO;
+import com.organization.taskManagement.DTO.EmployeeRegistrationResponseDTO;
 import com.organization.taskManagement.Model.EmployeeRegModel;
 
 public class EmployeeMapper {
 
-    public static EmployeeRegModel toEntity(EmployeeRegistrationRequest  request){
+    public static EmployeeRegModel toEntity(EmployeeRegistrationRequestDTO request){
 
         if(request == null) return null;
 
@@ -20,11 +20,11 @@ public class EmployeeMapper {
                 .build();
     }
 
-    public static EmployeeRegistrationResponse toResponse(EmployeeRegModel employee){
+    public static EmployeeRegistrationResponseDTO toResponse(EmployeeRegModel employee){
 
         if(employee == null) return  null;
 
-        return EmployeeRegistrationResponse.builder()
+        return EmployeeRegistrationResponseDTO.builder()
                 .id(employee.getId())
                 .name(employee.getName())
                 .email(employee.getEmail())

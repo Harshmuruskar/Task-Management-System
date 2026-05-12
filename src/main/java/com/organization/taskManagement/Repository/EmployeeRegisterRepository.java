@@ -1,11 +1,11 @@
-package com.organization.taskManagement.Repos;
+package com.organization.taskManagement.Repository;
 
 import com.organization.taskManagement.Model.EmployeeRegModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface EmployeeRegRepo extends JpaRepository<EmployeeRegModel, Long> {
+public interface EmployeeRegisterRepository extends JpaRepository<EmployeeRegModel, Long> {
 
     boolean existsByEmail(String email);
 

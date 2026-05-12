@@ -6,11 +6,10 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class TaskPatchRequest {
+public class TaskResponseDTO {
+    private String id;
     private String title;
-    private String description;
-    private String assignedToId;
-    private LocalDate dueDate;
     private TaskStatus status;
+    private String assignedTo;
+    private LocalDate dueDate;
 }
-

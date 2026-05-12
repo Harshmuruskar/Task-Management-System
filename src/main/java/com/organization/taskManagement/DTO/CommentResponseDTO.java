@@ -3,7 +3,7 @@ package com.organization.taskManagement.DTO;
 import lombok.Data;
 
 @Data
-public class CommentResponse {
+public class CommentResponseDTO {
     private String id;
     private String userId;
     private String userName;

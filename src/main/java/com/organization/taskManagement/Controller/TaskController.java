@@ -1,18 +1,18 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.ApiResponse;
-import com.organization.taskManagement.DTO.TaskListResponse;
-import com.organization.taskManagement.DTO.TaskPatchRequest;
-import com.organization.taskManagement.DTO.TaskRequest;
-import com.organization.taskManagement.DTO.TaskResponse;
-import com.organization.taskManagement.DTO.TaskUpdateResponse;
+import com.organization.taskManagement.DTO.ApiResponseDTO;
+import com.organization.taskManagement.DTO.TaskListResponseDTO;
+import com.organization.taskManagement.DTO.TaskPatchRequestDTO;
+import com.organization.taskManagement.DTO.TaskRequestDTO;
+import com.organization.taskManagement.DTO.TaskResponseDTO;
+import com.organization.taskManagement.DTO.TaskUpdateResponseDTO;
 import com.organization.taskManagement.Services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -20,50 +20,38 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping("/task")
-    public ResponseEntity<ApiResponse<TaskResponse>> createTask(@RequestBody TaskRequest taskRequest) {
+    public ResponseEntity<ApiResponseDTO<TaskResponseDTO>> createTask(@RequestBody TaskRequestDTO taskRequest) {
         try {
-            TaskResponse taskResponse = taskService.createTask(taskRequest);
-            return ResponseEntity.ok(ApiResponse.success("Task created successfully", taskResponse));
+            TaskResponseDTO taskResponse = taskService.createTask(taskRequest);
+            return ResponseEntity.ok(ApiResponseDTO.success("Task created successfully", taskResponse));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+            return ResponseEntity.badRequest().body(ApiResponseDTO.failure(e.getMessage()));
         }
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<ApiResponse<TaskListResponse>> getTasks(
+    public ResponseEntity<ApiResponseDTO<TaskListResponseDTO>> getTasks(
             @RequestParam(required = false) String team,
             @RequestParam(required = false) String status
     ) {
         try {
-            TaskListResponse response = new TaskListResponse(taskService.getTasks(team, status));
-            return ResponseEntity.ok(ApiResponse.success("", response));
+            TaskListResponseDTO response = new TaskListResponseDTO(taskService.getTasks(team, status));
+            return ResponseEntity.ok(ApiResponseDTO.success("", response));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+            return ResponseEntity.badRequest().body(ApiResponseDTO.failure(e.getMessage()));
         }
     }
 
     @PatchMapping("/tasks/{id}")
-    public ResponseEntity<ApiResponse<TaskUpdateResponse>> updateTask(
+    public ResponseEntity<ApiResponseDTO<TaskUpdateResponseDTO>> updateTask(
             @PathVariable Long id,
-            @RequestBody TaskPatchRequest request
+            @RequestBody TaskPatchRequestDTO request
     ) {
         try {
-            TaskUpdateResponse response = taskService.updateTask(id, request);
-            return ResponseEntity.ok(ApiResponse.success("Task updated successfully", response));
+            TaskUpdateResponseDTO response = taskService.updateTask(id, request);
+            return ResponseEntity.ok(ApiResponseDTO.success("Task updated successfully", response));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+            return ResponseEntity.badRequest().body(ApiResponseDTO.failure(e.getMessage()));
         }
     }
-
-  /*  @GetMapping("/task/{id}")
-    public ResponseEntity<ApiResponse<TaskResponse>> getTaskById(@PathVariable Long id) {
-        try {
-            TaskResponse taskResponse = taskService.getTaskById(id);
-            return ResponseEntity.ok(ApiResponse.success("Task retrieved successfully", taskResponse));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
-        }
-    }*/
-
-
 }

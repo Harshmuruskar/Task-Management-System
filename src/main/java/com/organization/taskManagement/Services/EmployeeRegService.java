@@ -1,11 +1,11 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.EmployeeRegistrationRequest;
-import com.organization.taskManagement.DTO.EmployeeRegistrationResponse;
-import com.organization.taskManagement.DTO.LoginRequest;
+import com.organization.taskManagement.DTO.EmployeeRegistrationRequestDTO;
+import com.organization.taskManagement.DTO.EmployeeRegistrationResponseDTO;
+import com.organization.taskManagement.DTO.LoginRequestDTO;
 import com.organization.taskManagement.Mappers.EmployeeMapper;
 import com.organization.taskManagement.Model.EmployeeRegModel;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeeRegService {
 
-    private final EmployeeRegRepo employeeRegRepo;
+    private final EmployeeRegisterRepository employeeRegRepo;
     private final PasswordEncoder passwordEncoder;
 
 
-    public EmployeeRegistrationResponse registerEmployee(EmployeeRegistrationRequest request) {
+    public EmployeeRegistrationResponseDTO registerEmployee(EmployeeRegistrationRequestDTO request) {
 
         if (employeeRegRepo.existsByEmployeeId(request.getEmployeeId())) {
             throw new RuntimeException("Employee ID already exists");
@@ -37,7 +37,7 @@ public class EmployeeRegService {
         return EmployeeMapper.toResponse(result);
     }
 
-    public EmployeeRegistrationResponse login(LoginRequest request) {
+    public EmployeeRegistrationResponseDTO login(LoginRequestDTO request) {
         EmployeeRegModel employee = employeeRegRepo.findByEmployeeId(request.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
@@ -58,7 +58,7 @@ public class EmployeeRegService {
         employeeRegRepo.delete(employee);
     }
 
-    public Page<EmployeeRegistrationResponse> getAllEmployees(Pageable pageable) {
+    public Page<EmployeeRegistrationResponseDTO> getAllEmployees(Pageable pageable) {
         return employeeRegRepo.findAll(pageable)
                 .map(EmployeeMapper::toResponse);
     }

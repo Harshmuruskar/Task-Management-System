@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeRegistrationResponse {
+public class EmployeeRegistrationResponseDTO {
     private Long id;
     private String name;
     private String email;
