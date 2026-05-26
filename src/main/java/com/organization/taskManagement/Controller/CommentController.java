@@ -16,7 +16,6 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    //post comment  who is id comment the task
     @PostMapping("/{id}/comments")
     public ResponseEntity<ApiResponseDTO<CommentCreateResponse>> addComment(@PathVariable Long id, @RequestBody CommentRequestDTO requestDTO){
         CommentResponseDTO commentResponseDTO = commentService.addComment(id, requestDTO);

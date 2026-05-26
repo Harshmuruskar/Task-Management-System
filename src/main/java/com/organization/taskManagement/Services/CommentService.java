@@ -20,7 +20,6 @@ public class CommentService {
     private final TaskRepository taskRepository;
     private final EmployeeRegisterRepository employeeRegisterRepository;
 
-    //comment service
     public CommentResponseDTO addComment(Long taskId, CommentRequestDTO requestDTO) {
         TaskModel task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with ID: " + taskId));

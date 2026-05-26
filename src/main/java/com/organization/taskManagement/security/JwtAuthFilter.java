@@ -15,14 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * STEP-BY-STEP INTERNAL WORKINGS:
- * 
- * 1. This filter intercepts every incoming HTTP request (OncePerRequestFilter).
- * 2. It checks for a JWT token in the "Authorization" header.
- * 3. If a valid token is found, it "authenticates" the user by setting the security context.
- * 4. This allows Spring Security to know who is making the request for subsequent steps.
- */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -42,10 +34,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/error/**"
     };
 
-    /**
-     * INTERNAL FLOW: Skip Filtering
-     * If the requested URL is in the PUBLIC_URLS list, we don't look for a token.
-     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
@@ -61,16 +49,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return false;
     }
 
-    /**
-     * INTERNAL FLOW: Main Filter Logic
-     * 1. Extract the "Authorization" header.
-     * 2. Validate the format (must start with "Bearer ").
-     * 3. Extract the token and the employee ID from it.
-     * 4. If ID is valid and user is not already authenticated:
-     *    a. Load user details from database.
-     *    b. Validate the token against the user details.
-     *    c. Create an Authentication object and put it in the SecurityContext.
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -93,12 +71,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             sendUnauthorizedError(response, "Invalid Authorization header format. Use: Bearer <token>");
             return;
         } else {
-            // No token found - let the request pass, Spring Security will block it later if the URL is protected
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Extract employeeId from token
         try {
             employeeId = jwtService.extractEmpId(token);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
@@ -109,7 +85,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 3. Authenticate user if not already authenticated in this session
         if (employeeId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails userDetails = userInfoService.loadUserByUsername(employeeId);
@@ -131,14 +106,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        // 4. Continue to the next filter in the chain
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * INTERNAL FLOW: Error Handling
-     * Sends a custom JSON response when authentication fails.
-     */
     private void sendUnauthorizedError(HttpServletResponse response, String message)
             throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

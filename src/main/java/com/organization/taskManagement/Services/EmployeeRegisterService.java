@@ -21,14 +21,12 @@ public class EmployeeRegisterService {
     private final EmployeeRegisterRepository employeeRegRepo;
     private final PasswordEncoder passwordEncoder;
 
-    //delete employee by id
     public void deleteEmployee (Long id){
         EmployeeRegisterModel employee = employeeRegRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
         employeeRegRepo.delete(employee);
     }
 
-    //get all employee
     public Page<EmployeeRegistrationResponseDTO> getAllEmployees(Pageable pageable) {
         return employeeRegRepo.findAll(pageable)
                 .map(EmployeeMapper::toResponse);

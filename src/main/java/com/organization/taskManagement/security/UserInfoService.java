@@ -13,13 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * STEP-BY-STEP INTERNAL WORKINGS:
- * 
- * 1. This service implements UserDetailsService, which is how Spring Security retrieves user data.
- * 2. It connects Spring Security to our database (EmployeeRegisterRepository).
- * 3. It also handles adding new employees with encrypted passwords.
- */
+
 @Service
 public class UserInfoService implements UserDetailsService {
 
@@ -31,13 +25,6 @@ public class UserInfoService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * INTERNAL FLOW: Loading User
-     * 1. Spring Security calls this when it needs to verify a user (e.g., during login or JWT validation).
-     * 2. We search the database by employeeId.
-     * 3. If found, we wrap the employee entity in a UserInfoDetails object.
-     * 4. If not found, we throw a UsernameNotFoundException.
-     */
     @Override
     public UserDetails loadUserByUsername(@NonNull String employeeId) throws UsernameNotFoundException {
         Optional<EmployeeRegisterModel> employeeOpt = employeeRegRepo.findByEmployeeId(employeeId);
@@ -49,12 +36,6 @@ public class UserInfoService implements UserDetailsService {
         return new UserInfoDetails(employee);
     }
 
-    /**
-     * INTERNAL FLOW: Registration
-     * 1. Checks if the employee ID already exists.
-     * 2. Encrypts the raw password using BCrypt.
-     * 3. Maps the DTO to an Entity and saves it.
-     */
     public String addEmployee(EmployeeRegistrationRequestDTO employeeDto) {
         if(employeeRegRepo.findByEmployeeId(employeeDto.getEmployeeId()).isPresent()) {
             return "Employee ID already exists";

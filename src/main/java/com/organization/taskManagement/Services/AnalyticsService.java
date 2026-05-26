@@ -18,18 +18,14 @@ public class AnalyticsService {
     private final TaskRepository taskRepo;
 
     public AnalyticsResponseDTO getAnalyticsOverview() {
-        // Get total task count
         long totalTasks = taskRepo.count();
 
-        // Get completed tasks count
         long completedTasks = taskRepo.countByStatus(TaskStatus.DONE);
 
-        // Get pending tasks count (NEW + ASSIGN)
         long newTasks = taskRepo.countByStatus(TaskStatus.NEW);
         long assignedTasks = taskRepo.countByStatus(TaskStatus.ASSIGN);
         long pendingTasks = newTasks + assignedTasks;
 
-        // Get team distribution by designation
         Map<String, Long> teamDistribution = getTeamDistribution();
 
         return AnalyticsResponseDTO.builder()

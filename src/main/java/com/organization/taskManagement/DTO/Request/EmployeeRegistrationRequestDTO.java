@@ -21,7 +21,7 @@ public class EmployeeRegistrationRequestDTO {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@koderztech\\.com$", message = "Email must be a valid @koderztech.com address")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Email must be a valid @koderztech.com address")
     private String email;
 
     @NotBlank(message = "Employee ID is required")

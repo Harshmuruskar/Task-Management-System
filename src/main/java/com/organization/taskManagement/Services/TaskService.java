@@ -20,7 +20,6 @@ public class TaskService {
     private final TaskRepository taskRepo;
     private final EmployeeRegisterRepository employeeRegRepo;
 
-    // create task service
     public TaskResponseDTO createTask(TaskRequestDTO taskRequest) {
         EmployeeRegisterModel employee = null;
         if (taskRequest.getAssignedToId() != null && !taskRequest.getAssignedToId().isEmpty()) {

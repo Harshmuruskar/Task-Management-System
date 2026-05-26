@@ -21,8 +21,6 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    // 1. Handles validation errors from @Valid in Controller
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseDTO<Map<String, String>>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -39,7 +37,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure("Validation failed. Please check the errors.", errors));
     }
 
-    // 2. Handles validation errors from @Validated in Service/Entity (JPA validation)
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponseDTO<Map<String, String>>> handleConstraintViolation(
             ConstraintViolationException ex) {
@@ -61,7 +58,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure("Validation failed. Please check the errors.", errors));
     }
 
-    // 3. Handles duplicate data (unique constraint violations)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleDataIntegrityViolation(
             DataIntegrityViolationException ex) {
@@ -88,7 +84,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(message, null));
     }
 
-    // 4. Handles generic database errors
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleDataAccessException(
             DataAccessException ex) {
@@ -100,7 +95,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure("Database operation failed. Please try again later.", null));
     }
 
-    // 5. Handles invalid JSON format in request body
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex) {
@@ -121,7 +115,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(message, null));
     }
 
-    // 6. Handles missing required request parameters
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleMissingParams(
             MissingServletRequestParameterException ex) {
@@ -135,7 +128,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(message, null));
     }
 
-    // 7. Handles type mismatch in path variables or request parameters
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleTypeMismatch(
             MethodArgumentTypeMismatchException ex) {
@@ -154,7 +146,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(message, null));
     }
 
-    // 8. Handles custom business exceptions (you can add your own)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleIllegalArgument(
             IllegalArgumentException ex) {
@@ -177,7 +168,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(ex.getMessage(), null));
     }
 
-    // 9. Handles generic runtime exceptions (catch-all)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleRuntimeException(
             RuntimeException ex) {
@@ -197,7 +187,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(message, null));
     }
 
-    // 10. Handles all other exceptions (catch-all)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleGenericException(
             Exception ex) {
@@ -215,10 +204,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseDTO.failure(message, null));
     }
 
-    // Helper method to check if in development environment
     private boolean isDevEnvironment() {
-        // You can inject @Value("${spring.profiles.active}") and check
         return true; // For demo, always return true
-        // In production, return false
     }
 }

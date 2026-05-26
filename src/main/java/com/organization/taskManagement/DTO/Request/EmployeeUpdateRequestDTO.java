@@ -18,7 +18,7 @@ public class EmployeeUpdateRequestDTO {
     private String name;
 
     @Email(message = "Invalid email format")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(koderztech\\.com|gmail\\.com)$")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(gmail\\.com)$")
     private String email;
 
     private EmployeeRole role;
