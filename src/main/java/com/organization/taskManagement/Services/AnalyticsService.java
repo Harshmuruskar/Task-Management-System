@@ -1,13 +1,13 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.AnalyticsResponseDTO;
+import com.organization.taskManagement.DTO.Response.AnalyticsResponseDTO;
 import com.organization.taskManagement.Enums.TaskStatus;
-import com.organization.taskManagement.Model.Task;
+import com.organization.taskManagement.Model.TaskModel;
 import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,28 +15,43 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AnalyticsService {
 
-	private final TaskRepository taskRepo;
+    private final TaskRepository taskRepo;
 
-	public AnalyticsResponseDTO getOverview() {
-		List<Task> tasks = taskRepo.findAll();
+    public AnalyticsResponseDTO getAnalyticsOverview() {
+        // Get total task count
+        long totalTasks = taskRepo.count();
 
-		long totalTasks = tasks.size();
-		long completedTasks = tasks.stream().filter(task -> task.getStatus() == TaskStatus.DONE).count();
-		long pendingTasks = tasks.stream().filter(task -> task.getStatus() != TaskStatus.DONE).count();
+        // Get completed tasks count
+        long completedTasks = taskRepo.countByStatus(TaskStatus.DONE);
 
-		Map<String, Long> teamDistribution = new LinkedHashMap<>();
-		tasks.stream()
-				.filter(task -> task.getTeamId() != null && !task.getTeamId().isBlank())
-				.forEach(task -> {
-					String team = task.getTeamId().trim().toLowerCase();
-					teamDistribution.put(team, teamDistribution.getOrDefault(team, 0L) + 1);
-				});
+        // Get pending tasks count (NEW + ASSIGN)
+        long newTasks = taskRepo.countByStatus(TaskStatus.NEW);
+        long assignedTasks = taskRepo.countByStatus(TaskStatus.ASSIGN);
+        long pendingTasks = newTasks + assignedTasks;
 
-		AnalyticsResponseDTO response = new AnalyticsResponseDTO();
-		response.setTotalTasks(totalTasks);
-		response.setCompletedTasks(completedTasks);
-		response.setPendingTasks(pendingTasks);
-		response.setTeamDistribution(teamDistribution);
-		return response;
-	}
+        // Get team distribution by designation
+        Map<String, Long> teamDistribution = getTeamDistribution();
+
+        return AnalyticsResponseDTO.builder()
+                .totalTasks(totalTasks)
+                .completedTasks(completedTasks)
+                .pendingTasks(pendingTasks)
+                .teamDistribution(teamDistribution)
+                .build();
+    }
+
+    private Map<String, Long> getTeamDistribution() {
+        List<TaskModel> assignedTasks = taskRepo.findAllAssignedTasks();
+        Map<String, Long> distribution = new HashMap<>();
+
+        for (TaskModel task : assignedTasks) {
+            if (task.getAssignedTo() != null && task.getAssignedTo().getDesignation() != null) {
+                String designation = task.getAssignedTo().getDesignation().toString();
+                distribution.put(designation, distribution.getOrDefault(designation, 0L) + 1);
+            }
+        }
+
+        return distribution;
+    }
 }
+
