@@ -1,25 +1,34 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.Request.CommentRequestDTO;
-import com.organization.taskManagement.DTO.Response.ApiResponseDTO;
-import com.organization.taskManagement.DTO.Response.CommentCreateResponse;
-import com.organization.taskManagement.DTO.Response.CommentResponseDTO;
+import com.organization.taskManagement.DTO.ApiResponse;
+import com.organization.taskManagement.DTO.CommentCreateResponse;
+import com.organization.taskManagement.DTO.CommentRequest;
 import com.organization.taskManagement.Services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentService commentService;
+	private final CommentService commentService;
 
-    @PostMapping("/{id}/comments")
-    public ResponseEntity<ApiResponseDTO<CommentCreateResponse>> addComment(@PathVariable Long id, @RequestBody CommentRequestDTO requestDTO){
-        CommentResponseDTO commentResponseDTO = commentService.addComment(id, requestDTO);
-        CommentCreateResponse commentCreateResponse = new CommentCreateResponse(commentResponseDTO);
-        return ResponseEntity.ok(ApiResponseDTO.success("Comment added successfully", commentCreateResponse));
-    }
+	@PostMapping("/{id}/comments")
+	public ResponseEntity<ApiResponse<CommentCreateResponse>> addComment(
+			@PathVariable Long id,
+			@RequestBody CommentRequest request
+	) {
+		try {
+			CommentCreateResponse response = commentService.addComment(id, request);
+			return ResponseEntity.ok(ApiResponse.success("Comment added successfully", response));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+		}
+	}
 }

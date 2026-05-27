@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +12,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+
     private final JwtService jwtService;
+
     private final UserInfoService userInfoService;
 
     public JwtAuthFilter(JwtService jwtService, UserInfoService userInfoService) {
@@ -26,14 +25,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.userInfoService = userInfoService;
     }
 
-    // List of URLs that do not require authentication
+    // Public APIs (No JWT needed)
     public static final String[] PUBLIC_URLS  = {
-            "/auth/register",
+            "/api/auth/register",
             "/generateToken",
-            "/auth/login",
+            "/api/auth/login",
             "/error/**"
     };
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
@@ -51,9 +49,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+            throws ServletException, java.io.IOException {
 
-        // Allow preflight CORS requests
+        // Allow preflight requests
         if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request, response);
@@ -64,44 +62,61 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = null;
         String employeeId = null;
 
-        // 1. Check for token presence
+        // Extract token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         } else if (authHeader != null) {
             sendUnauthorizedError(response, "Invalid Authorization header format. Use: Bearer <token>");
             return;
         } else {
-            filterChain.doFilter(request, response);
+            sendUnauthorizedError(response, "Missing Authorization header");
             return;
         }
 
+        // Extract email from token
         try {
             employeeId = jwtService.extractEmpId(token);
+            System.out.println("Extracted Email from Token: {}"+employeeId);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             sendUnauthorizedError(response, "Token has expired");
             return;
+        } catch (io.jsonwebtoken.SignatureException e) {
+            sendUnauthorizedError(response, "Invalid token signature");
+            return;
         } catch (Exception e) {
-            sendUnauthorizedError(response, "Invalid token: " + e.getMessage());
+            // SEND 401 for any other JWT error
+            System.out.println("Error extracting email from token: {}"+ e.getMessage());
+            sendUnauthorizedError(response, "Invalid token");
             return;
         }
 
+        // Validate token
         if (employeeId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails userDetails = userInfoService.loadUserByUsername(employeeId);
+                System.out.println("Loaded user Details: {}"+ userDetails.getUsername());
 
                 if (jwtService.validateToken(token, userDetails)) {
-                    // Create Authentication token for Spring's internal use
+                    System.out.println("Token validation successful for: {}"+ employeeId);
+
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities()
                             );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    
-                    // IMPORTANT: Setting the context makes the user "logged in" for this request
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("Token validation failed for: {}"+ employeeId);
+                    sendUnauthorizedError(response, "Token validation failed");
+                    return;
                 }
             } catch (UsernameNotFoundException e) {
+                System.out.println("User not found: {}"+ employeeId);
                 sendUnauthorizedError(response, "User not found");
+                return;
+            } catch (Exception e) {
+                System.out.println("Authentication error: {}"+ e.getMessage());
+                sendUnauthorizedError(response, "Authentication failed");
                 return;
             }
         }
@@ -110,7 +125,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private void sendUnauthorizedError(HttpServletResponse response, String message)
-            throws IOException {
+            throws java.io.IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
 

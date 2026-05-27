@@ -1,44 +1,34 @@
 package com.organization.taskManagement.security;
 
+import com.organization.taskManagement.Model.RefreshToken;
+import com.organization.taskManagement.Repos.RefreshTokenRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import org.springframework.stereotype.Service;
-
-import com.organization.taskManagement.Model.RefreshTokenModel;
-import com.organization.taskManagement.Repository.RefreshTokenRepository;
-
-import lombok.RequiredArgsConstructor;
-
-
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    
     private final RefreshTokenRepository refreshTokenRepository;
 
+   public RefreshToken createRefreshToken(String employeeId, String employeeRole ){
+       refreshTokenRepository.deleteByEmployeeId(employeeId);
+         RefreshToken refreshToken = new RefreshToken();
 
-    public RefreshTokenModel createRefreshToken(String employeeId, String employeeRole) {
-        // Cleanup old tokens
-        refreshTokenRepository.deleteByEmployeeId(employeeId);
-        
-        // Build new token object
-        RefreshTokenModel refreshToken = RefreshTokenModel.builder()
-                .token(UUID.randomUUID().toString())
-                .employeeId(employeeId)
-                .userType(employeeRole)
-                .expiryDate(Instant.now().plus(7, ChronoUnit.DAYS)) // Valid for 7 days
-                .build();
+         refreshToken.setToken(UUID.randomUUID().toString());
+         refreshToken.setUserType(employeeRole);
+         refreshToken.setExpiryDate(Instant.now().plus(604800000, ChronoUnit.MILLIS));
+       return refreshTokenRepository.save(refreshToken);
+   }
 
-        return refreshTokenRepository.save(refreshToken);
-    }
-
-    public RefreshTokenModel verifyExpiration(RefreshTokenModel token) {
-        if (token.getExpiryDate().isBefore(Instant.now())) {
-            refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token was expired. Please make a new login request");
-        }
-        return token;
-    }
+   public RefreshToken verifyExpiration(RefreshToken token){
+       if(token.getExpiryDate().isBefore(Instant.now())){
+           refreshTokenRepository.delete(token);
+           throw new RuntimeException("Refresh token was expired. Please make a new signIn request");
+       }
+       return token;
+   }
 }

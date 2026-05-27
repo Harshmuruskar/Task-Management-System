@@ -3,6 +3,7 @@ package com.organization.taskManagement.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +18,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
 @Service
 public class JwtService {
 
     @Value("${jwt.secret}")
-    private String secret;
+    private String secret ;
 
     public String generateToken(String employeeId, UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -34,23 +34,20 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(employeeId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour validity
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith( getKey(),SignatureAlgorithm.HS256)
                 .compact();
     }
-
 
     public Key getKey(){
         byte [] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
+    private <T> T extractClaim(String token, Function<Claims, T > claimsResolver){
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
 
     private Claims extractAllClaims(String token){
         return Jwts.parserBuilder()

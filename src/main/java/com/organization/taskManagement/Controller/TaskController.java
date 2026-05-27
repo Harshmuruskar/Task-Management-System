@@ -1,49 +1,69 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.Response.ApiResponseDTO;
-import com.organization.taskManagement.DTO.Request.TaskRequestDTO;
-import com.organization.taskManagement.DTO.Response.TaskResponseDTO;
+import com.organization.taskManagement.DTO.ApiResponse;
+import com.organization.taskManagement.DTO.TaskListResponse;
+import com.organization.taskManagement.DTO.TaskPatchRequest;
+import com.organization.taskManagement.DTO.TaskRequest;
+import com.organization.taskManagement.DTO.TaskResponse;
+import com.organization.taskManagement.DTO.TaskUpdateResponse;
 import com.organization.taskManagement.Services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class TaskController {
+
 
     private final TaskService taskService;
 
     @PostMapping("/task")
-    public ResponseEntity<ApiResponseDTO<TaskResponseDTO>> createTask(@RequestBody TaskRequestDTO taskRequest) {
-        TaskResponseDTO taskResponse = taskService.createTask(taskRequest);
-        return ResponseEntity.ok(ApiResponseDTO.success("Task created successfully", taskResponse));
-    }
-
-    @GetMapping("/task/{id}")
-    public ResponseEntity<ApiResponseDTO<TaskResponseDTO>> getTaskById(@PathVariable Long id) {
-        TaskResponseDTO taskResponse = taskService.getTaskById(id);
-        return ResponseEntity.ok(ApiResponseDTO.success("Task retrieved successfully", taskResponse));
+    public ResponseEntity<ApiResponse<TaskResponse>> createTask(@RequestBody TaskRequest taskRequest) {
+        try {
+            TaskResponse taskResponse = taskService.createTask(taskRequest);
+            return ResponseEntity.ok(ApiResponse.success("Task created successfully", taskResponse));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+        }
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<ApiResponseDTO<List<TaskResponseDTO>>> getAllTasks() {
-        List<TaskResponseDTO> tasks = taskService.getAllTasks();
-        return ResponseEntity.ok(ApiResponseDTO.success("Tasks retrieved successfully", tasks));
+    public ResponseEntity<ApiResponse<TaskListResponse>> getTasks(
+            @RequestParam(required = false) String team,
+            @RequestParam(required = false) String status
+    ) {
+        try {
+            TaskListResponse response = new TaskListResponse(taskService.getTasks(team, status));
+            return ResponseEntity.ok(ApiResponse.success("", response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+        }
     }
 
-    @PutMapping("/task/{id}")
-    public ResponseEntity<ApiResponseDTO<TaskResponseDTO>> updateTask(@PathVariable Long id, @RequestBody TaskRequestDTO taskRequest) {
-        TaskResponseDTO taskResponse = taskService.updateTask(id, taskRequest);
-        return ResponseEntity.ok(ApiResponseDTO.success("Task updated successfully", taskResponse));
+    @PatchMapping("/tasks/{id}")
+    public ResponseEntity<ApiResponse<TaskUpdateResponse>> updateTask(
+            @PathVariable Long id,
+            @RequestBody TaskPatchRequest request
+    ) {
+        try {
+            TaskUpdateResponse response = taskService.updateTask(id, request);
+            return ResponseEntity.ok(ApiResponse.success("Task updated successfully", response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+        }
     }
 
-    @DeleteMapping("/task/{id}")
-    public ResponseEntity<ApiResponseDTO<String>> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.ok(ApiResponseDTO.success("Task deleted successfully", null));
-    }
+  /*  @GetMapping("/task/{id}")
+    public ResponseEntity<ApiResponse<TaskResponse>> getTaskById(@PathVariable Long id) {
+        try {
+            TaskResponse taskResponse = taskService.getTaskById(id);
+            return ResponseEntity.ok(ApiResponse.success("Task retrieved successfully", taskResponse));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
+        }
+    }*/
+
+
 }

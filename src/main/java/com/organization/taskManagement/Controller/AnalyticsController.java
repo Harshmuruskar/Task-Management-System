@@ -1,7 +1,7 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.Response.AnalyticsResponseDTO;
-import com.organization.taskManagement.DTO.Response.ApiResponseDTO;
+import com.organization.taskManagement.DTO.AnalyticsResponse;
+import com.organization.taskManagement.DTO.ApiResponse;
 import com.organization.taskManagement.Services.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("analytics")
+@RequestMapping("/api/analytics")
 @RequiredArgsConstructor
 public class AnalyticsController {
 
-    private final AnalyticsService analyticsService;
+	private final AnalyticsService analyticsService;
 
-    @GetMapping("/overview")
-    public ResponseEntity<ApiResponseDTO<AnalyticsResponseDTO>> getAnalyticsOverview() {
-            AnalyticsResponseDTO analyticsResponse = analyticsService.getAnalyticsOverview();
-            return ResponseEntity.ok(ApiResponseDTO.success("Analytics overview retrieved successfully", analyticsResponse));
-    }
+	@GetMapping("/overview")
+	public ResponseEntity<ApiResponse<AnalyticsResponse>> overview() {
+		return ResponseEntity.ok(ApiResponse.success("", analyticsService.getOverview()));
+	}
 }
-
