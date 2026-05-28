@@ -27,9 +27,12 @@ public class TaskService {
 	private final EmployeeRegRepo employeeRegRepo;
 
 	public TaskResponse createTask(TaskRequest taskRequest) {
+        EmployeeRegModel employeeRegModel = null;
 
-		EmployeeRegModel employeeRegModel = employeeRegRepo.findByEmployeeId(taskRequest.getAssignedToId())
+		if(taskRequest.getAssignedToId() != null){
+             employeeRegModel = employeeRegRepo.findByEmployeeId(taskRequest.getAssignedToId())
 				.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + taskRequest.getAssignedToId()));
+        }
 
 		Task task = Task.builder()
 				.title(taskRequest.getTitle())
