@@ -1,9 +1,9 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.AnalyticsResponse;
+import com.organization.taskManagement.DTO.Response.AnalyticsResponse;
 import com.organization.taskManagement.Enums.TaskStatus;
-import com.organization.taskManagement.Model.Task;
-import com.organization.taskManagement.Repos.TaskRepo;
+import com.organization.taskManagement.Model.TaskModel;
+import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AnalyticsService {
 
-	private final TaskRepo taskRepo;
+	private final TaskRepository taskRepo;
 
 	public AnalyticsResponse getOverview() {
-		List<Task> tasks = taskRepo.findAll();
+		List<TaskModel> tasks = taskRepo.findAll();
 
 		long totalTasks = tasks.size();
 		long completedTasks = tasks.stream().filter(task -> task.getStatus() == TaskStatus.DONE).count();

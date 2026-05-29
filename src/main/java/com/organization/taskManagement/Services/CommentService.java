@@ -1,15 +1,15 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.CommentCreateResponse;
-import com.organization.taskManagement.DTO.CommentRequest;
-import com.organization.taskManagement.DTO.CommentResponse;
+import com.organization.taskManagement.DTO.Request.CommentRequest;
+import com.organization.taskManagement.DTO.Response.CommentCreateResponse;
+import com.organization.taskManagement.DTO.Response.CommentResponse;
 import com.organization.taskManagement.Mappers.CommentMapper;
-import com.organization.taskManagement.Model.Comment;
-import com.organization.taskManagement.Model.EmployeeRegModel;
-import com.organization.taskManagement.Model.Task;
-import com.organization.taskManagement.Repos.CommentRepository;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
-import com.organization.taskManagement.Repos.TaskRepo;
+import com.organization.taskManagement.Model.CommentModel;
+import com.organization.taskManagement.Model.EmployeeRegisterModel;
+import com.organization.taskManagement.Model.TaskModel;
+import com.organization.taskManagement.Repository.CommentRepository;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
+import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +18,18 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
 	private final CommentRepository commentRepository;
-	private final TaskRepo taskRepo;
-	private final EmployeeRegRepo employeeRegRepo;
+	private final TaskRepository taskRepo;
+	private final EmployeeRegisterRepository employeeRegRepo;
 
 	public CommentCreateResponse addComment(Long taskId, CommentRequest request) {
-		Task task = taskRepo.findById(taskId)
+		TaskModel task = taskRepo.findById(taskId)
 				.orElseThrow(() -> new RuntimeException("Task not found with ID: " + taskId));
 
-		EmployeeRegModel employee = employeeRegRepo.findByEmployeeId(request.getUserId())
+		EmployeeRegisterModel employee = employeeRegRepo.findByEmployeeId(request.getUserId())
 				.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + request.getUserId()));
 
-		Comment comment = CommentMapper.toEntity(request, task, employee);
-		Comment savedComment = commentRepository.save(comment);
+		CommentModel comment = CommentMapper.toEntity(request, task, employee);
+		CommentModel savedComment = commentRepository.save(comment);
 		CommentResponse commentResponse = CommentMapper.toResponse(savedComment);
 
 		return new CommentCreateResponse(commentResponse);

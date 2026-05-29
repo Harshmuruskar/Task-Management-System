@@ -1,11 +1,11 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.ApiResponse;
-import com.organization.taskManagement.DTO.TaskListResponse;
-import com.organization.taskManagement.DTO.TaskPatchRequest;
-import com.organization.taskManagement.DTO.TaskRequest;
-import com.organization.taskManagement.DTO.TaskResponse;
-import com.organization.taskManagement.DTO.TaskUpdateResponse;
+import com.organization.taskManagement.DTO.Request.TaskPatchRequest;
+import com.organization.taskManagement.DTO.Request.TaskRequest;
+import com.organization.taskManagement.DTO.Response.ApiResponse;
+import com.organization.taskManagement.DTO.Response.TaskListResponse;
+import com.organization.taskManagement.DTO.Response.TaskResponse;
+import com.organization.taskManagement.DTO.Response.TaskUpdateResponse;
 import com.organization.taskManagement.Services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

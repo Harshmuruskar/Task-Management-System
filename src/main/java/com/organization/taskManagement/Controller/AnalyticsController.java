@@ -1,7 +1,7 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.AnalyticsResponse;
-import com.organization.taskManagement.DTO.ApiResponse;
+import com.organization.taskManagement.DTO.Response.AnalyticsResponse;
+import com.organization.taskManagement.DTO.Response.ApiResponse;
 import com.organization.taskManagement.Services.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

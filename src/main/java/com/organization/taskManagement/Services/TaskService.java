@@ -1,15 +1,15 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.TaskRequest;
-import com.organization.taskManagement.DTO.TaskPatchRequest;
-import com.organization.taskManagement.DTO.TaskResponse;
-import com.organization.taskManagement.DTO.TaskUpdateResponse;
+import com.organization.taskManagement.DTO.Request.TaskPatchRequest;
+import com.organization.taskManagement.DTO.Request.TaskRequest;
+import com.organization.taskManagement.DTO.Response.TaskResponse;
+import com.organization.taskManagement.DTO.Response.TaskUpdateResponse;
 import com.organization.taskManagement.Enums.TaskStatus;
 import com.organization.taskManagement.Mappers.TaskMapper;
-import com.organization.taskManagement.Model.EmployeeRegModel;
-import com.organization.taskManagement.Model.Task;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
-import com.organization.taskManagement.Repos.TaskRepo;
+import com.organization.taskManagement.Model.EmployeeRegisterModel;
+import com.organization.taskManagement.Model.TaskModel;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
+import com.organization.taskManagement.Repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TaskService {
 
-	private final TaskRepo taskRepo;
+	private final TaskRepository taskRepo;
 
-	private final EmployeeRegRepo employeeRegRepo;
+	private final EmployeeRegisterRepository employeeRegRepo;
 
 	public TaskResponse createTask(TaskRequest taskRequest) {
-        EmployeeRegModel employeeRegModel = null;
+        EmployeeRegisterModel employeeRegModel = null;
 
 		if(taskRequest.getAssignedToId() != null){
              employeeRegModel = employeeRegRepo.findByEmployeeId(taskRequest.getAssignedToId())
 				.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + taskRequest.getAssignedToId()));
         }
 
-		Task task = Task.builder()
+		TaskModel task = TaskModel.builder()
 				.title(taskRequest.getTitle())
 				.description(taskRequest.getDescription())
 				.teamId(taskRequest.getTeamId())
@@ -44,13 +44,13 @@ public class TaskService {
 				.status(TaskStatus.NEW)
 				.build();
 
-		Task savedTask = taskRepo.save(task);
+		TaskModel savedTask = taskRepo.save(task);
 
 		return TaskMapper.toResponse(savedTask);
 	}
 
 	public TaskUpdateResponse updateTask(Long id, TaskPatchRequest patchRequest) {
-		Task task = taskRepo.findById(id)
+		TaskModel task = taskRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Task not found with ID: " + id));
 
 		if (patchRequest.getTitle() != null) {
@@ -66,12 +66,12 @@ public class TaskService {
 			task.setStatus(patchRequest.getStatus());
 		}
 		if (patchRequest.getAssignedToId() != null) {
-			EmployeeRegModel employeeRegModel = employeeRegRepo.findByEmployeeId(patchRequest.getAssignedToId())
+			EmployeeRegisterModel employeeRegModel = employeeRegRepo.findByEmployeeId(patchRequest.getAssignedToId())
 					.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + patchRequest.getAssignedToId()));
 			task.setAssignedTo(employeeRegModel);
 		}
 
-		Task savedTask = taskRepo.save(task);
+		TaskModel savedTask = taskRepo.save(task);
 		return new TaskUpdateResponse(TaskMapper.toResponse(savedTask));
 	}
 

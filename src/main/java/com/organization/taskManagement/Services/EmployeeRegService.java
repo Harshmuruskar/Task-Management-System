@@ -1,11 +1,11 @@
 package com.organization.taskManagement.Services;
 
-import com.organization.taskManagement.DTO.EmployeeRegistrationRequest;
-import com.organization.taskManagement.DTO.EmployeeRegistrationResponse;
-import com.organization.taskManagement.DTO.LoginRequest;
+import com.organization.taskManagement.DTO.Request.EmployeeRegistrationRequest;
+import com.organization.taskManagement.DTO.Request.LoginRequest;
+import com.organization.taskManagement.DTO.Response.EmployeeRegistrationResponse;
 import com.organization.taskManagement.Mappers.EmployeeMapper;
-import com.organization.taskManagement.Model.EmployeeRegModel;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
+import com.organization.taskManagement.Model.EmployeeRegisterModel;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeeRegService {
 
-    private final EmployeeRegRepo employeeRegRepo;
+    private final EmployeeRegisterRepository employeeRegRepo;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -30,15 +30,15 @@ public class EmployeeRegService {
             throw new RuntimeException("Email already exists");
         }
 
-        EmployeeRegModel employeeRegModel = EmployeeMapper.toEntity(request);
+        EmployeeRegisterModel employeeRegModel = EmployeeMapper.toEntity(request);
         employeeRegModel.setPassword(passwordEncoder.encode(employeeRegModel.getPassword()));
-        EmployeeRegModel result = employeeRegRepo.save(employeeRegModel);
+        EmployeeRegisterModel result = employeeRegRepo.save(employeeRegModel);
 
         return EmployeeMapper.toResponse(result);
     }
 
     public EmployeeRegistrationResponse login(LoginRequest request) {
-        EmployeeRegModel employee = employeeRegRepo.findByEmployeeId(request.getEmployeeId())
+        EmployeeRegisterModel employee = employeeRegRepo.findByEmployeeId(request.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
 
@@ -51,7 +51,7 @@ public class EmployeeRegService {
     }
 
     public void deleteEmployee (Long id){
-        EmployeeRegModel employee = employeeRegRepo.findById(id)
+        EmployeeRegisterModel employee = employeeRegRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
         employeeRegRepo.delete(employee);
     }

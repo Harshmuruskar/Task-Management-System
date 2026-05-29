@@ -1,6 +1,6 @@
 package com.organization.taskManagement.security;
 
-import com.organization.taskManagement.Model.EmployeeRegModel;
+import com.organization.taskManagement.Model.EmployeeRegisterModel;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,9 +11,9 @@ import java.util.Collections;
 
 public class UserInfoDetails implements UserDetails {
 
-    private EmployeeRegModel employee;
+    private EmployeeRegisterModel employee;
 
-    public UserInfoDetails(EmployeeRegModel employee) {
+    public UserInfoDetails(EmployeeRegisterModel employee) {
         this.employee = employee;
     }
 

@@ -1,7 +1,7 @@
 package com.organization.taskManagement.security;
 
 import com.organization.taskManagement.Model.RefreshToken;
-import com.organization.taskManagement.Repos.RefreshTokenRepository;
+import com.organization.taskManagement.Repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,12 +1,9 @@
 package com.organization.taskManagement.Controller;
 
 
-import com.organization.taskManagement.DTO.ApiResponse;
-import com.organization.taskManagement.DTO.EmployeeRegistrationRequest;
-import com.organization.taskManagement.DTO.EmployeeRegistrationResponse;
-import com.organization.taskManagement.DTO.LoginRequest;
+import com.organization.taskManagement.DTO.Response.ApiResponse;
+import com.organization.taskManagement.DTO.Response.EmployeeRegistrationResponse;
 import com.organization.taskManagement.Services.EmployeeRegService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class EmployeeRegController {
+public class EmployeeRegisterController {
 
     private final EmployeeRegService employeeRegService;
 

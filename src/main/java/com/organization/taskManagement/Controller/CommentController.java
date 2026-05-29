@@ -1,8 +1,8 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.ApiResponse;
-import com.organization.taskManagement.DTO.CommentCreateResponse;
-import com.organization.taskManagement.DTO.CommentRequest;
+import com.organization.taskManagement.DTO.Request.CommentRequest;
+import com.organization.taskManagement.DTO.Response.ApiResponse;
+import com.organization.taskManagement.DTO.Response.CommentCreateResponse;
 import com.organization.taskManagement.Services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

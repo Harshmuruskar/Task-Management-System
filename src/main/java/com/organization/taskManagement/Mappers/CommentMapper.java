@@ -1,28 +1,28 @@
 package com.organization.taskManagement.Mappers;
 
-import com.organization.taskManagement.DTO.CommentRequest;
-import com.organization.taskManagement.DTO.CommentResponse;
-import com.organization.taskManagement.Model.EmployeeRegModel;
-import com.organization.taskManagement.Model.Comment;
-import com.organization.taskManagement.Model.Task;
+import com.organization.taskManagement.DTO.Request.CommentRequest;
+import com.organization.taskManagement.DTO.Response.CommentResponse;
+import com.organization.taskManagement.Model.CommentModel;
+import com.organization.taskManagement.Model.EmployeeRegisterModel;
+import com.organization.taskManagement.Model.TaskModel;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class CommentMapper {
 
-    public static Comment toEntity(CommentRequest request, Task task, EmployeeRegModel employee) {
+    public static CommentModel toEntity(CommentRequest request, TaskModel task, EmployeeRegisterModel employee) {
 
         if (request == null) return null;
 
-        return Comment.builder()
+        return CommentModel.builder()
                 .message(request.getText())
                 .employeeId(employee)
-                .task(task)
+                .taskModel(task)
                 .build();
     }
 
-    public static CommentResponse toResponse(Comment comment) {
+    public static CommentResponse toResponse(CommentModel comment) {
 
         if (comment == null) return null;
 

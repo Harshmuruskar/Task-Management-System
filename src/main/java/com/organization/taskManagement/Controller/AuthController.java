@@ -1,17 +1,17 @@
 package com.organization.taskManagement.Controller;
 
-import com.organization.taskManagement.DTO.*;
-import com.organization.taskManagement.Model.EmployeeRegModel;
+import com.organization.taskManagement.DTO.Request.EmployeeRegistrationRequest;
+import com.organization.taskManagement.DTO.Request.LoginRequest;
+import com.organization.taskManagement.DTO.Request.RefreshTokenRequest;
+import com.organization.taskManagement.Model.EmployeeRegisterModel;
 import com.organization.taskManagement.Model.RefreshToken;
-import com.organization.taskManagement.Repos.EmployeeRegRepo;
-import com.organization.taskManagement.Repos.RefreshTokenRepository;
-import com.organization.taskManagement.Services.EmployeeRegService;
+import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
+import com.organization.taskManagement.Repository.RefreshTokenRepository;
 import com.organization.taskManagement.security.JwtService;
 import com.organization.taskManagement.security.RefreshTokenService;
 import com.organization.taskManagement.security.UserInfoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,7 +38,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final UserInfoService userInfoService;
-    private final EmployeeRegRepo employeeRegRepo;
+    private final EmployeeRegisterRepository employeeRegRepo;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -61,11 +60,11 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( errorResponse( "Employee ID and password are required"));
 
             }
-            Optional<EmployeeRegModel> employeeRegModels = employeeRegRepo.findByEmployeeId(request.getEmployeeId());
+            Optional<EmployeeRegisterModel> employeeRegModels = employeeRegRepo.findByEmployeeId(request.getEmployeeId());
             if(employeeRegModels.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse("User not found with employee ID: " + request.getEmployeeId()));
             }
-            EmployeeRegModel employee = employeeRegModels.get();
+            EmployeeRegisterModel employee = employeeRegModels.get();
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmployeeId(), request.getPassword())
             );
