@@ -3,7 +3,7 @@ package com.organization.taskManagement.Controller;
 
 import com.organization.taskManagement.DTO.Response.ApiResponse;
 import com.organization.taskManagement.DTO.Response.EmployeeRegistrationResponse;
-import com.organization.taskManagement.Services.EmployeeRegService;
+import com.organization.taskManagement.Services.EmployeeRegisterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class EmployeeRegisterController {
 
-    private final EmployeeRegService employeeRegService;
+    private final EmployeeRegisterService employeeRegService;
 
 
     @GetMapping
@@ -32,10 +32,9 @@ public class EmployeeRegisterController {
     }
 
     @DeleteMapping("/{id}")
-   public ResponseEntity<ApiResponse<?>> deleteEmployee(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<?>> deleteEmployee(@PathVariable Long id){
         employeeRegService.deleteEmployee(id);
         return ResponseEntity.ok(ApiResponse.success("Employee deleted successfully", null));
-   }
-
+    }
 
 }

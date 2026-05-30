@@ -6,6 +6,7 @@ import com.organization.taskManagement.DTO.Response.EmployeeRegistrationResponse
 import com.organization.taskManagement.Mappers.EmployeeMapper;
 import com.organization.taskManagement.Model.EmployeeRegisterModel;
 import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
+import com.organization.taskManagement.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +24,11 @@ public class EmployeeRegisterService {
     public EmployeeRegistrationResponse registerEmployee(EmployeeRegistrationRequest request) {
 
         if (employeeRegisterRepository.existsByEmployeeId(request.getEmployeeId())) {
-            throw new RuntimeException("Employee ID already exists");
+            throw new IllegalArgumentException("Employee ID already exists");
         }
 
         if (employeeRegisterRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new IllegalArgumentException("Email already exists");
         }
 
         EmployeeRegisterModel employeeRegisterModel = EmployeeMapper.toEntity(request);
@@ -39,12 +40,11 @@ public class EmployeeRegisterService {
 
     public EmployeeRegistrationResponse login(LoginRequest request) {
         EmployeeRegisterModel employee = employeeRegisterRepository.findByEmployeeId(request.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-
+                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
 
 
         if (!passwordEncoder.matches(request.getPassword(), employee.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new IllegalArgumentException("Invalid credentials");
         }
 
         return EmployeeMapper.toResponse(employee);
@@ -52,7 +52,7 @@ public class EmployeeRegisterService {
 
     public void deleteEmployee (Long id){
         EmployeeRegisterModel employee = employeeRegisterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", id));
         employeeRegisterRepository.delete(employee);
     }
 
@@ -60,6 +60,5 @@ public class EmployeeRegisterService {
         return employeeRegisterRepository.findAll(pageable)
                 .map(EmployeeMapper::toResponse);
     }
-
 
 }

@@ -21,12 +21,8 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<ApiResponse<TaskResponse>> createTask(@RequestBody TaskRequest taskRequest) {
-        try {
-            TaskResponse taskResponse = taskService.createTask(taskRequest);
-            return ResponseEntity.ok(ApiResponse.success("Task created successfully", taskResponse));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
-        }
+        TaskResponse taskResponse = taskService.createTask(taskRequest);
+        return ResponseEntity.ok(ApiResponse.success("Task created successfully", taskResponse));
     }
 
     @GetMapping("/tasks")
@@ -34,12 +30,8 @@ public class TaskController {
             @RequestParam(required = false) String team,
             @RequestParam(required = false) String status
     ) {
-        try {
-            TaskListResponse response = new TaskListResponse(taskService.getTasks(team, status));
-            return ResponseEntity.ok(ApiResponse.success("", response));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
-        }
+        TaskListResponse response = new TaskListResponse(taskService.getTasks(team, status));
+        return ResponseEntity.ok(ApiResponse.success("", response));
     }
 
     @PatchMapping("/tasks/{id}")
@@ -47,23 +39,9 @@ public class TaskController {
             @PathVariable Long id,
             @RequestBody TaskPatchRequest request
     ) {
-        try {
-            TaskUpdateResponse response = taskService.updateTask(id, request);
-            return ResponseEntity.ok(ApiResponse.success("Task updated successfully", response));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
-        }
+        TaskUpdateResponse response = taskService.updateTask(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Task updated successfully", response));
+
     }
-
-  /*  @GetMapping("/task/{id}")
-    public ResponseEntity<ApiResponse<TaskResponse>> getTaskById(@PathVariable Long id) {
-        try {
-            TaskResponse taskResponse = taskService.getTaskById(id);
-            return ResponseEntity.ok(ApiResponse.success("Task retrieved successfully", taskResponse));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
-        }
-    }*/
-
 
 }

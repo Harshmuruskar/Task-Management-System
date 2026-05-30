@@ -24,11 +24,7 @@ public class CommentController {
 			@PathVariable Long id,
 			@RequestBody CommentRequest request
 	) {
-		try {
-			CommentCreateResponse response = commentService.addComment(id, request);
-			return ResponseEntity.ok(ApiResponse.success("Comment added successfully", response));
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
-		}
+		CommentCreateResponse response = commentService.addComment(id, request);
+		return ResponseEntity.ok(ApiResponse.success("Comment added successfully", response));
 	}
 }

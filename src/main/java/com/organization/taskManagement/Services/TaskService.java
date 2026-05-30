@@ -10,6 +10,7 @@ import com.organization.taskManagement.Model.EmployeeRegisterModel;
 import com.organization.taskManagement.Model.TaskModel;
 import com.organization.taskManagement.Repository.EmployeeRegisterRepository;
 import com.organization.taskManagement.Repository.TaskRepository;
+import com.organization.taskManagement.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,19 +32,10 @@ public class TaskService {
 
 		if(taskRequest.getAssignedToId() != null){
              employeeRegModel = employeeRegRepo.findByEmployeeId(taskRequest.getAssignedToId())
-				.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + taskRequest.getAssignedToId()));
+				.orElseThrow(() -> new ResourceNotFoundException("Employee", "ID", taskRequest.getAssignedToId()));
         }
 
-		TaskModel task = TaskModel.builder()
-				.title(taskRequest.getTitle())
-				.description(taskRequest.getDescription())
-				.teamId(taskRequest.getTeamId())
-				.assignedTo(employeeRegModel)
-				.dueDate(taskRequest.getDueDate())
-				.updatedAt(Instant.now())
-				.status(TaskStatus.NEW)
-				.build();
-
+		TaskModel task = TaskMapper.toEntity(taskRequest, employeeRegModel);
 		TaskModel savedTask = taskRepo.save(task);
 
 		return TaskMapper.toResponse(savedTask);
@@ -51,7 +43,7 @@ public class TaskService {
 
 	public TaskUpdateResponse updateTask(Long id, TaskPatchRequest patchRequest) {
 		TaskModel task = taskRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Task not found with ID: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("Task", id));
 
 		if (patchRequest.getTitle() != null) {
 			task.setTitle(patchRequest.getTitle());
@@ -67,7 +59,7 @@ public class TaskService {
 		}
 		if (patchRequest.getAssignedToId() != null) {
 			EmployeeRegisterModel employeeRegModel = employeeRegRepo.findByEmployeeId(patchRequest.getAssignedToId())
-					.orElseThrow(() -> new RuntimeException("Employee not found with ID: " + patchRequest.getAssignedToId()));
+					.orElseThrow(() -> new ResourceNotFoundException("Employee", "ID", patchRequest.getAssignedToId()));
 			task.setAssignedTo(employeeRegModel);
 		}
 

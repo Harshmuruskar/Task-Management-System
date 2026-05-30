@@ -17,7 +17,7 @@ public class RefreshTokenService {
    public RefreshToken createRefreshToken(String employeeId, String employeeRole ){
        refreshTokenRepository.deleteByEmployeeId(employeeId);
          RefreshToken refreshToken = new RefreshToken();
-
+         refreshToken.setEmployeeId(employeeId);
          refreshToken.setToken(UUID.randomUUID().toString());
          refreshToken.setUserType(employeeRole);
          refreshToken.setExpiryDate(Instant.now().plus(604800000, ChronoUnit.MILLIS));

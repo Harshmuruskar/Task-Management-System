@@ -13,13 +13,20 @@ public class TaskMapper {
 
         if (request == null) return null;
 
+        TaskStatus finalStatus;
+        if (employee == null) {
+            finalStatus = TaskStatus.NEW;
+        } else {
+            finalStatus = request.getStatus() != null ? request.getStatus() : TaskStatus.ASSIGNED;
+        }
+
         return TaskModel.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .teamId(request.getTeamId())
                 .dueDate(request.getDueDate())
                 .assignedTo(employee)
-                .status(request.getStatus() != null ? request.getStatus() : TaskStatus.NEW)
+                .status(finalStatus)
                 .build();
     }
 

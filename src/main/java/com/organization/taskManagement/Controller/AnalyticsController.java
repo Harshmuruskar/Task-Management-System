@@ -18,6 +18,7 @@ public class AnalyticsController {
 
 	@GetMapping("/overview")
 	public ResponseEntity<ApiResponse<AnalyticsResponse>> overview() {
-		return ResponseEntity.ok(ApiResponse.success("", analyticsService.getOverview()));
+		AnalyticsResponse analyticsResponse = analyticsService.getOverview();
+		return ResponseEntity.ok(ApiResponse.success("Analytics overview retrieved successfully", analyticsService.getOverview()));
 	}
 }
